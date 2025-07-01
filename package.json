@@ -1,0 +1,35 @@
+{
+  "name": "phaser-jumping-box-game",
+  "version": "1.0.0",
+  "description": "A simple Phaser 3 jumping box game built with TypeScript",
+  "main": "src/game.ts",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "phaser",
+    "game",
+    "typescript",
+    "webpack"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "css-loader": "^6.8.1",
+    "html-inline-css-webpack-plugin": "^1.11.2",
+    "html-webpack-plugin": "^5.5.3",
+    "rimraf": "^5.0.5",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "dependencies": {
+    "phaser": "^3.70.0"
+  }
+}
