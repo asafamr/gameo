@@ -67,21 +67,20 @@ export class MainScene extends Phaser.Scene {
         this.load.font('PressStart2P', 'PressStart2P-Regular.ttf');
         
         // Load the baba image
-        this.load.image('chev', 'chev.png');
-        this.load.audio('game', 'game.mp3');
+        this.load.image('chev', 'chev.gif');
+        this.load.audio('game', 'game2.mp3');
         this.load.audio('grunt', 'grunt.mp3');
         this.load.audio('morte', 'morte.mp3');
         this.load.audio('punch', 'punch.mp3');
         this.load.audio('hadouken', 'hadu.mp3');
 
 
-        // this.load.image('baba', 'baba-sprite.png');
-        this.load.spritesheet('babasprite', 'baba-sprite.png', {
+        this.load.spritesheet('babasprite', 'baba-sprite.gif', {
             frameWidth:256,
             frameHeight: 256,
             
         });
-        this.load.spritesheet('lipssprite', 'lips-sprite.png', {
+        this.load.spritesheet('lipssprite', 'lips-sprite.gif', {
             frameWidth:256,
             frameHeight: 256,
         });

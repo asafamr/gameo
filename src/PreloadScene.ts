@@ -8,7 +8,22 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     preload(): void {
-       
+        // Load the font
+        this.load.font('PressStart2P', 'PressStart2P-Regular.ttf');
+        
+        // Load images
+        this.load.image('baba', 'baba.gif');
+        this.load.image('chev', 'chev.jpg');
+        this.load.image('harbu', 'harbu.gif');
+        this.load.image('lips', 'lips.gif');
+
+        // Load audio
+        this.load.audio('intro', 'intro2.mp3');
+        this.load.audio('game', 'game2.mp3');
+        this.load.audio('hadouken', 'hadu.mp3');
+        this.load.audio('morte', 'morte.mp3');
+        this.load.audio('punch', 'punch.mp3');
+        this.load.audio('grunt', 'grunt.mp3');
        
     }
     

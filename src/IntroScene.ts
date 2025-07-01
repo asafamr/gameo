@@ -17,14 +17,12 @@ export class IntroScene extends Phaser.Scene {
         this.load.font('PressStart2P', 'PressStart2P-Regular.ttf');
         
         // Load the baba image
-        this.load.image('baba', 'baba.png');
-        this.load.image('chev', 'chev.png');
-        this.load.image('harbu', 'harbu.png');
-        this.load.image('lips', 'lips.png');
+        this.load.image('baba', 'baba.gif');
+        this.load.image('chev', 'chev.jpg');
+        this.load.image('harbu', 'harbu.gif');
+        this.load.image('lips', 'lips.gif');
 
-        this.load.audio('intro', 'intro.mp3');
-
-       
+        this.load.audio('intro', 'intro2.mp3');
        
     }
     
