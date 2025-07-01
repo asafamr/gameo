@@ -1,122 +1,118 @@
 import Phaser from 'phaser';
 import './styles.css';
+import { IntroScene } from './IntroScene';
+import { PreloadScene } from './PreloadScene';
+import { MainScene } from './MainScene';
 
-class GameScene extends Phaser.Scene {
-    private box!: Phaser.GameObjects.Rectangle;
-    private ground!: Phaser.GameObjects.Rectangle;
+// Mobile-optimized game configuration
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    constructor() {
-        super({ key: 'GameScene' });
-    }
-
-    preload(): void {
-        // No assets to preload for this simple game
-    }
-
-    create(): void {
-        // Create the box sprite
-        this.box = this.add.rectangle(400, 500, 80, 80, 0x3498db);
-        this.box.setInteractive();
-        
-        // Add physics to the box
-        this.physics.add.existing(this.box);
-        
-        // Type assertion to access physics body properties
-        const boxBody = this.box.body as Phaser.Physics.Arcade.Body;
-        boxBody.setCollideWorldBounds(true);
-        boxBody.setBounce(0.3);
-        
-        // Ground
-        this.ground = this.add.rectangle(400, 580, 800, 40, 0x2ecc71);
-        this.physics.add.existing(this.ground, true); // true makes it static
-        
-        // Set up collision between box and ground
-        this.physics.add.collider(this.box, this.ground);
-        
-        // Click/tap to jump
-        this.box.on('pointerdown', () => {
-            this.jumpBox();
-        });
-        
-        // Alternative: click anywhere to jump
-        this.input.on('pointerdown', () => {
-            this.jumpBox();
-        });
-        
-        // Add some text instructions
-        this.add.text(400, 100, 'Click the box (or anywhere) to make it jump!', {
-            fontSize: '24px',
-            color: '#ffffff',
-            align: 'center'
-        }).setOrigin(0.5);
-        
-        // Add a title
-        this.add.text(400, 50, 'Jumping Box Game', {
-            fontSize: '32px',
-            color: '#e74c3c',
-            fontStyle: 'bold',
-            align: 'center'
-        }).setOrigin(0.5);
-        
-        // Add subtitle
-        this.add.text(400, 150, 'Built with TypeScript & Phaser 3', {
-            fontSize: '16px',
-            color: '#95a5a6',
-            align: 'center'
-        }).setOrigin(0.5);
-    }
+// Calculate optimal game size for landscape mobile gaming
+const getGameDimensions = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
     
-    private jumpBox(): void {
-        const boxBody = this.box.body as Phaser.Physics.Arcade.Body;
+    if (isMobile) {
+        // Force landscape aspect ratio on mobile
+        const isLandscape = screenWidth > screenHeight;
         
-        // Only allow jumping if the box is on the ground (not already jumping)
-        if (boxBody.touching.down) {
-            boxBody.setVelocityY(-400); // Negative Y is up in Phaser
-            
-            // Add a little visual feedback - scale animation
-            this.tweens.add({
-                targets: this.box,
-                scaleX: 1.2,
-                scaleY: 0.8,
-                duration: 100,
-                yoyo: true,
-                ease: 'Power2'
-            });
-        }
-    }
-    
-    update(): void {
-        const boxBody = this.box.body as Phaser.Physics.Arcade.Body;
-        
-        // Optional: Add some rotation while in air
-        if (!boxBody.touching.down) {
-            this.box.rotation += 0.05;
+        if (isLandscape) {
+            // Use full screen in landscape mode
+            return {
+                width: screenWidth,
+                height: screenHeight
+            };
         } else {
-            // Reset rotation when on ground
-            this.box.rotation = 0;
+            // In portrait mode, prepare for landscape (this will be handled by CSS)
+            // Use landscape aspect ratio (16:9 or similar)
+            const landscapeWidth = Math.max(screenWidth, screenHeight);
+            const landscapeHeight = Math.min(screenWidth, screenHeight);
+            
+            return {
+                width: landscapeWidth,
+                height: landscapeHeight
+            };
         }
+    } else {
+        // Desktop - use landscape aspect ratio
+        const maxWidth = screenWidth * 0.9;
+        const maxHeight = screenHeight * 0.9;
+        
+        return {
+            width: Math.min(maxWidth, 1000),
+            height: Math.min(maxHeight, 600)
+        };
     }
-}
+};
 
-// Game configuration
+const { width, height } = getGameDimensions();
+
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width,
+    height,
     parent: 'game-container',
     backgroundColor: '#87ceeb',
+    // Mobile performance optimizations
+    render: {
+        pixelArt: false,
+        antialias: true,
+        antialiasGL: false, // Disable for better mobile performance
+        roundPixels: true
+    },
+    // Scale manager optimized for landscape mobile gaming
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        // Landscape-oriented minimum dimensions
+        min: {
+            width: 480,
+            height: 320
+        },
+        max: {
+            width: 1920,
+            height: 1080
+        },
+        // Auto-resize when orientation changes
+        autoRound: true
+    },
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { x: 0, y: 800 },
-            debug: false
+            debug: false,
+            // Mobile optimization
+            fps: isMobile ? 30 : 60 // Lower FPS on mobile for better performance
         }
     },
-    scene: GameScene
+    // Mobile-specific settings
+    input: {
+        touch: true,
+        mouse: true,
+        // Better pointer handling for mobile
+        activePointers: 3
+    },
+    scene: [PreloadScene, IntroScene, MainScene]
 };
+
+// Handle orientation changes for better mobile experience
+if (isMobile) {
+    window.addEventListener('orientationchange', () => {
+        // Small delay to ensure the viewport has updated
+        setTimeout(() => {
+            game.scale.resize(window.innerWidth, window.innerHeight);
+        }, 100);
+    });
+    
+    // Also handle window resize
+    window.addEventListener('resize', () => {
+        setTimeout(() => {
+            game.scale.resize(window.innerWidth, window.innerHeight);
+        }, 100);
+    });
+}
 
 // Initialize the game
 const game = new Phaser.Game(config);
 
-// Export for potential use in other modules
 export default game; 
